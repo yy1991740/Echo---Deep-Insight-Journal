@@ -103,22 +103,7 @@ export const InsightCard: React.FC<InsightCardProps> = ({ data, lang }) => {
         const fileName = `ECHO_Soul_${new Date().toISOString().slice(0,10)}.png`;
         const file = new File([blob], fileName, { type: "image/png" });
 
-        // 优先尝试原生分享 (iOS/Android 最佳体验)
-        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-            try {
-                await navigator.share({
-                    files: [file],
-                    title: 'ECHO Insight Card',
-                    text: data.golden_quote || 'My Deep Insight Journal Memory',
-                });
-                return; // 分享成功则退出
-            } catch (error) {
-                console.log("Share cancelled or failed, falling back to download", error);
-                // 如果用户取消或分享失败，继续执行下方的下载逻辑作为兜底
-            }
-        }
-
-        // 降级方案：传统下载链接 (Desktop / 不支持Share的设备)
+        // 直接下载保存，不再优先调用分享
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
